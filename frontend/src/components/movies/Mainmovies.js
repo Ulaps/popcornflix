@@ -1,24 +1,28 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { getAllMovies, setHasMore } from '../../redux/movieSlice';
+import { getAllMovies, getMovieTitles, setHasMore } from '../../redux/movieSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
 import { CardMedia, Grid, Paper } from '@mui/material';
+import Search from '../Search';
+import { Box } from '@mui/system';
 
 const Mainmovies = () => {
     
-    const { movies, moviesCount, filteredMoviesCount, hasMore, page } = useSelector(state => state.movie);
+    const { movies, movieTitles, moviesCount, filteredMoviesCount, hasMore, page } = useSelector(state => state.movie);
+    const { keywords } = useSelector(state => state.filter)
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-            fetchMoreData()
-        }, [])
+      dispatch(getMovieTitles());
+      fetchMoreData()
+    }, [])
 
     console.log(movies);
 
     const fetchMoreData = () => {
-        dispatch (getAllMovies({page}));
+        dispatch (getAllMovies({...keywords, page}));
         if(movies.length < 0 && movies.length >= filteredMoviesCount) return dispatch(setHasMore(false));
       };
     
@@ -28,6 +32,9 @@ const Mainmovies = () => {
 <div>
         <h1>MOVIES</h1>
         <hr />
+        <Box sx={{m:3}}>
+          <Search items={movieTitles} label="Search Movie"/>
+        </Box>
         <InfiniteScroll
           dataLength={movies.length}
           next={fetchMoreData}

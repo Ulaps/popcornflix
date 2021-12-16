@@ -35,10 +35,23 @@ export const getProducerInfos = createAsyncThunk(
     }
 )
 
+export const getProducerNames = createAsyncThunk(
+    'producer/getProducerName',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.get(`/api/v1/staffname?work=Producer`)
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 
 const initialState = {
     staffs: [],
     staffsCount: 0,
+    producerNames: [],
     resPerPage: 0,
     isLoading: false,
     errors:null,
@@ -55,6 +68,10 @@ const producerSlice = createSlice({
         },
         setPage : (state, action) => {
             state.page = action.payload
+        },
+        clearProducers : (state) => {
+            state.staffs = []
+            state.page =1
         }
     },
     extraReducers: {
@@ -82,8 +99,24 @@ const producerSlice = createSlice({
         [getProducerInfos.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
+        },
+        [getProducerNames.pending] : (state) => {
+            state.isLoading = true
+        },
+        [getProducerNames.fulfilled] : (state, action) => {
+            const names = []
+
+            action.payload.names.reduce((obj,item) => {
+                return names.push({"title":item})
+            })
+            state.producerNames = names
+            state.isLoading = false
+        },
+        [getProducerNames.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
         }
     }
 });
-export const {setHasMore, setPage} = producerSlice.actions
+export const {setHasMore, setPage, clearProducers} = producerSlice.actions
 export default producerSlice.reducer

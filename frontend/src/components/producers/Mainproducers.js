@@ -1,24 +1,31 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { getAllProducer, setHasMore } from '../../redux/producerSlice';
+import { clearProducers, getAllProducer, getProducerNames, setHasMore } from '../../redux/producerSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { CardMedia, Grid, Paper } from '@mui/material';
+import { Box, CardMedia, Grid, Paper } from '@mui/material';
+import Search from '../Search';
+import { setKeywords } from '../../redux/filterSlice';
 
 const Producer = () => {
     
-    const { staffs,  staffsCount, hasMore, page } = useSelector(state => state.producer);
+    const { staffs, producerNames,  staffsCount, hasMore, page } = useSelector(state => state.producer);
+    const { keywords } =useSelector(state => state.filter)
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-            fetchMoreData()
-        }, [])
+      dispatch(getProducerNames())
+      fetchMoreData()
+      return () => {
+        dispatch(clearProducers());
+      }
+    }, [])
 
     console.log(staffs);
 
     const fetchMoreData = () => {
-        dispatch (getAllProducer({page}));
+        dispatch (getAllProducer({...keywords, page}));
         if(staffs.length < 0 && staffs.length >= staffsCount) return dispatch(setHasMore(false));
       };
     
@@ -28,6 +35,9 @@ const Producer = () => {
 <div>
         <h1>PRODUCERS</h1>
         <hr />
+        <Box sx={{m:3}}>
+          <Search items={producerNames} label="Search Producer"/>
+        </Box>
         <InfiniteScroll
           dataLength={staffs.length}
           next={fetchMoreData}

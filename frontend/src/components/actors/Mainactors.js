@@ -1,24 +1,30 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { getAllActor, setHasMore } from '../../redux/actorSlice';
+import { clearActors, getActorNames, getAllActor, setHasMore } from '../../redux/actorSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { CardMedia, Grid, Paper } from '@mui/material';
+import { Box, CardMedia, Grid, Paper } from '@mui/material';
+import Search from '../Search';
 
 const Actor = () => {
     
-    const { staffs,  staffsCount, hasMore, page } = useSelector(state => state.actor);
+    const { staffs, actorNames, staffsCount, hasMore, page } = useSelector(state => state.actor);
+    const { keywords } = useSelector(state => state.filter);
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-            fetchMoreData()
-        }, [])
+      dispatch(getActorNames())
+      fetchMoreData()
+      return () => {
+        dispatch(clearActors());
+      }
+    }, [])
 
     console.log(staffs);
 
     const fetchMoreData = () => {
-        dispatch (getAllActor({page}));
+        dispatch (getAllActor({...keywords, page}));
         if(staffs.length < 0 && staffs.length >= staffsCount) return dispatch(setHasMore(false));
       };
     
@@ -28,6 +34,9 @@ const Actor = () => {
 <div>
         <h1>ACTORS</h1>
         <hr />
+        <Box sx={{m:3}}>
+          <Search items={actorNames} label="Search Actor"/>
+        </Box>
         <InfiniteScroll
           dataLength={staffs.length}
           next={fetchMoreData}

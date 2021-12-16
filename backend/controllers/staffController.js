@@ -213,7 +213,7 @@ exports.deleteStaffReview = catchAsyncErrors(async (req, res, next) => {
 
 //Get ng Name ONLY by Role
 exports.getStaffName = catchAsyncErrors(async (req, res, next) =>{
-    const names = await Staff.distinct('name');
+    const names = await Staff.find().where('work', req.query.work).distinct('name')
 
     res.status(200).json({
         success : true,

@@ -35,10 +35,24 @@ export const getMovieInfos = createAsyncThunk(
     }
 )
 
+export const getMovieTitles = createAsyncThunk(
+    'movie/getMovieTitles',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.get(`/api/v1/movie/search`)
+            return response.data
+            
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 
 const initialState = {
     movies: [],
     movie: null,
+    movieTitles: [],
     moviesCount: 0,
     resPerPage: 0,
     filteredMoviesCount: 0,
@@ -57,6 +71,10 @@ const movieSlice = createSlice({
         },
         setPage : (state, action) => {
             state.page = action.payload
+        },
+        clearMovies : (state) => {
+            state.movies = []
+            state.page =1
         }
     },
     extraReducers: {
@@ -85,8 +103,24 @@ const movieSlice = createSlice({
         [getMovieInfos.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
+        },
+        [getMovieTitles.pending] : (state) => {
+            state.isLoading = true
+        },
+        [getMovieTitles.fulfilled] : (state,action) => {
+            const titles = []
+
+            action.payload.titles.reduce((obj,item) => {
+                return titles.push({"title":item})
+            })
+            state.movieTitles = titles
+            state.isLoading = false
+        },
+        [getMovieTitles.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
         }
     }
 });
-export const {setHasMore, setPage} = movieSlice.actions
+export const {setHasMore, setPage, clearMovies} = movieSlice.actions
 export default movieSlice.reducer
