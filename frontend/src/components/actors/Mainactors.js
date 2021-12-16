@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
 import { getAllActor, setHasMore } from '../../redux/actorSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -39,6 +40,7 @@ const Actor = () => {
           <Grid container spacing={2} sx={{p:2}}>
             { staffs && staffs.map(staff => (
             <Grid item lg={4} md={4} key={staff._id} sm={4} xs={12}>
+              <Link to={`/actors/${staff._id}`}>
               <Paper elevation={4} sx={{p:2}}>
                 <CardMedia
                 component="img"
@@ -49,6 +51,7 @@ const Actor = () => {
                 />
                 {staff.name}
                 </Paper>
+                </Link>
                 </Grid>
                 ))}
                 </Grid>

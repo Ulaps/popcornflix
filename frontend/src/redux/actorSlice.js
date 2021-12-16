@@ -5,16 +5,16 @@ export const getAllActor = createAsyncThunk(
     'actor/getAllActor',
     async(obj, {rejectWithValue}) => {
         try {
-            // console.log(obj)
-            // //PAGKUHA NG PARAMETERS sa getAllMovies, Search
-            // let keywords = '';
-            // if(obj.toString().length > 0) {
-            //     keywords = Object.keys(obj).map((item,index) => {
-            //         return `${item}=${obj[item]}`
-            //     }).join('&')
-            // }
+            console.log(obj)
+            //PAGKUHA NG PARAMETERS sa getAllMovies, Search
+            let keywords = '';
+            if(obj.toString().length > 0) {
+                keywords = Object.keys(obj).map((item,index) => {
+                    return `${item}=${obj[item]}`
+                }).join('&')
+            }
 
-            const response = await axios.get(`/api/v1/allbyrole?work=Actor&work=Actress`)
+            const response = await axios.get(`/api/v1/allbyrole?work=Actor&work=Actress&${keywords}`)
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -22,9 +22,23 @@ export const getAllActor = createAsyncThunk(
     }
 )
 
+export const getActorInfos = createAsyncThunk(
+    'actor/getActorInfos',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.get(`/api/v1/staffdetails/${obj.id}`)
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+            
+        }
+    }
+)
+
 
 const initialState = {
     staffs: [],
+    staff: null,
     staffsCount: 0,
     resPerPage: 0,
     isLoading: false,
@@ -56,6 +70,17 @@ const actorSlice = createSlice({
             state.isLoading = false
         },
         [getAllActor.rejected] : (state,action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [getActorInfos.pending] : (state) => {
+            state.isLoading = true
+        },
+        [getActorInfos.fulfilled] : (state, action) => {
+            state.staff = action.payload.staff
+            state.isLoading = false
+        },
+        [getActorInfos] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         }

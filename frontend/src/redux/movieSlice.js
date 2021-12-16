@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios  from 'axios';
 
 export const getAllMovies = createAsyncThunk(
     'movie/getAllMovies',
@@ -22,9 +22,23 @@ export const getAllMovies = createAsyncThunk(
     }
 )
 
+export const getMovieInfos = createAsyncThunk(
+    'movie/getMovieInfos',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.get(`/api/v1/movies/${obj.id}`)
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+            
+        }
+    }
+)
+
 
 const initialState = {
     movies: [],
+    movie: null,
     moviesCount: 0,
     resPerPage: 0,
     filteredMoviesCount: 0,
@@ -57,7 +71,18 @@ const movieSlice = createSlice({
             state.page = state.page + 1
             state.isLoading = false
         },
-        [getAllMovies.rejected] : (state,action) => {
+        [getAllMovies.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [getMovieInfos.pending] : (state) => {
+            state.isLoading = true
+        },
+        [getMovieInfos.fulfilled] : (state, action) => {
+            state.movie = action.payload.movie
+            state.isLoading = false
+        },
+        [getMovieInfos.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         }

@@ -1,0 +1,92 @@
+[
+    {
+        "title" : "Harry Potter",
+        "year": 2010,
+        "date_released" : "2010-07-04",
+        "runtime" : 120,
+        "posters" : [
+            {
+                "public_id" : "products/dsvbpny402gelwugv2le",
+                "url" : "https://res.cloudinary.com/bookit/image/upload/v1608062030/products/dsvbpny402gelwugv2le.jpg"
+            }
+        ],
+        "plot" : "No plot just harry",
+        "actors" : [],
+        "producers" : null,
+        "directors" : null,
+        "genre" : "Sci-Fi",
+        "reviews" : []
+        
+    },
+    {
+        "title" : "Transformers",
+        "date_released" : "2017-07-04",
+        "runtime" : 120,
+        "posters" : [
+            {
+                "public_id" : "products/dsvbpny402gelwugv2le",
+                "url" : "https://res.cloudinary.com/bookit/image/upload/v1608062030/products/dsvbpny402gelwugv2le.jpg"
+            }
+        ],
+        "plot" : "No plot just transform",
+        "actors" : [],
+        "producers" : null,
+        "directors" : null,
+        "genre" : "Action",
+        "reviews" : []
+    },
+    {
+        "title" : "IT Man",
+        "year": 2015,
+        "date_released" : "2015-11-08",
+        "runtime" : 120,
+        "posters" : [
+            {
+                "public_id" : "products/dsvbpny402gelwugv2le",
+                "url" : "https://res.cloudinary.com/bookit/image/upload/v1608062030/products/dsvbpny402gelwugv2le.jpg"
+            }
+        ],
+        "plot" : "No plot just IT",
+        "actors" : [],
+        "producers" : null,
+        "directors" : null,
+        "genre" : "Horror",
+        "reviews" : []
+    },
+    {
+        "title" : "IP Man",
+        "year": 2020,
+        "date_released" : "2020-07-04",
+        "runtime" : 120,
+        "posters" : [
+            {
+                "public_id" : "products/dsvbpny402gelwugv2le",
+                "url" : "https://res.cloudinary.com/bookit/image/upload/v1608062030/products/dsvbpny402gelwugv2le.jpg"
+            }
+        ],
+        "plot" : "No plot just man",
+        "actors" : [],
+        "producers" : null,
+        "directors" : null,
+        "genre" : "War",
+        "reviews" : []
+    },
+    {
+        "title" : "Mr. Nobody",
+        "year": 2021,
+        "date_released" : "2021-07-04",
+        "runtime" : 120,
+        "posters" : [
+            {
+                "public_id" : "products/dsvbpny402gelwugv2le",
+                "url" : "https://res.cloudinary.com/bookit/image/upload/v1608062030/products/dsvbpny402gelwugv2le.jpg"
+            }
+        ],
+        "plot" : "No plot just nobody",
+        "actors" : [],
+        "producers" : null,
+        "directors" : null,
+        "genre" : "Sci-Fi",
+        "reviews" : []
+    }
+]

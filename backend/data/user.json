@@ -1,0 +1,22 @@
+[
+    {
+        "name":"Ulap",
+        "email":"ulap@gmail.com",
+        "avatar": {
+            "public_id":"ulap",
+            "url":"https://ui-avatars.com/api/?name=Ulap"
+        }
+    },
+    {
+        "name":"admin",
+        "email":"admin@gmail.com",
+        "avatar": {
+            "public_id" : "admin",
+            "url": "https://ui-avatars.com/api/?name=admin"
+        }
+    },
+    {
+        "name":"testing",
+        "email":"testuser@gmail.com"
+    }
+]
