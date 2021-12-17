@@ -30,7 +30,8 @@ const MovieInfos = () => {
             }
             <p>{movie && movie.genre}</p>
             <p>{movie && movie.showType}</p>
-            <p>{movie && movie.date_released}</p>
+            <p>{movie && movie.year}</p>
+            <p>{movie && movie.rating}</p>
             <p>{movie && movie.summary}</p>
 
         </div>

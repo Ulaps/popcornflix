@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import { logout } from '../redux/userSlice';
 import GoogleLogoutHook from './GoogleLogoutHook';
+import { clearFilters } from '../redux/filterSlice';
 
 const Navbar = () => {
     const pages = [{ name: 'Movies', link: '/'}, {name :'Actors', link: '/actors'},{name :'Producers', link: '/producers'}];
@@ -88,7 +89,7 @@ const Navbar = () => {
               >
                 {pages.map((page) => (
                   <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                     <><Link to={page.link} style={{ textDecoration:'none', color:'Black'}}>{page.name}</Link></>
+                     <><Link to={page.link} style={{ textDecoration:'none', color:'Black'}} onClick={dispatch(clearFilters())}>{page.name}</Link></>
                   </MenuItem>
                 ))}
               </Menu>
@@ -106,7 +107,7 @@ const Navbar = () => {
                 {/* <SearchBar/> */}
                 {pages.map((page) => (
                     <MenuItem key={page.name}>
-                        <Link to={page.link} style={{ textDecoration:'none', color:'white'}}>{page.name}</Link>
+                        <Link to={page.link} style={{ textDecoration:'none', color:'white'}} onClick={dispatch(clearFilters())}>{page.name}</Link>
                     </MenuItem>
                 ))}
                 {/* {

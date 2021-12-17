@@ -6,6 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Box, CardMedia, Grid, Paper } from '@mui/material';
 import Search from '../Search';
 import { setKeywords } from '../../redux/filterSlice';
+import RatingFilter from '../RatingFilter';
 
 const Producer = () => {
     
@@ -26,7 +27,7 @@ const Producer = () => {
 
     const fetchMoreData = () => {
         dispatch (getAllProducer({...keywords, page}));
-        if(staffs.length < 0 && staffs.length >= staffsCount) return dispatch(setHasMore(false));
+        // if(staffs.length < 0 && staffs.length >= staffsCount) return dispatch(setHasMore(false));
       };
     
     return ( 
@@ -38,14 +39,17 @@ const Producer = () => {
         <Box sx={{m:3}}>
           <Search items={producerNames} label="Search Producer"/>
         </Box>
+        <Box sx={{m:3}}>
+          <RatingFilter/>
+        </Box>
         <InfiniteScroll
           dataLength={staffs.length}
           next={fetchMoreData}
-          hasMore={hasMore}
+          hasMore={staffs.length >= staffsCount ? false : true}
           loader={staffs.length >= staffsCount ? <h4>NO MORE</h4> : <h4>Loading...</h4>}
-        //   endMessage={
-        //       <p>end result</p>
-        //   }
+          endMessage={
+              <p>END</p>
+          }
         >
           <Grid container spacing={2} sx={{p:2}}>
             { staffs && staffs.map(staff => (

@@ -34,7 +34,7 @@ const LoginForm = () => {
             sx={{p:2}}
         >
             { isLoading &&
-                <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1000 }} open={true}>
+                <Backdrop sx={{ color: 'black', zIndex: (theme) => theme.zIndex.drawer + 1000 }} open={true}>
                     <CircularProgress color="inherit" />
                 </Backdrop> 
             }

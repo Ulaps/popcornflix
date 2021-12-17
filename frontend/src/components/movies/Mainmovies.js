@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { getAllMovies, getMovieTitles, setHasMore } from '../../redux/movieSlice';
+import { clearMovies, getAllMovies, getMovieTitles, setHasMore } from '../../redux/movieSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
 import { CardMedia, Grid, Paper } from '@mui/material';
 import Search from '../Search';
 import { Box } from '@mui/system';
+import RatingFilter from '../RatingFilter';
+import YearFilter from '../YearFilter';
 
 const Mainmovies = () => {
     
@@ -17,13 +19,17 @@ const Mainmovies = () => {
     useEffect(() => {
       dispatch(getMovieTitles());
       fetchMoreData()
+
+      return () => {
+        dispatch(clearMovies());
+      }
     }, [])
 
     console.log(movies);
 
     const fetchMoreData = () => {
-        dispatch (getAllMovies({...keywords, page}));
-        if(movies.length < 0 && movies.length >= filteredMoviesCount) return dispatch(setHasMore(false));
+        dispatch (getAllMovies({page, ...keywords}));
+        // if(movies.length < 0 && movies.length >= filteredMoviesCount) return dispatch(setHasMore(false));
       };
     
     return ( 
@@ -35,14 +41,18 @@ const Mainmovies = () => {
         <Box sx={{m:3}}>
           <Search items={movieTitles} label="Search Movie"/>
         </Box>
+        <Box sx={{m:3}}>
+          <RatingFilter/>
+          <YearFilter/>
+        </Box>
         <InfiniteScroll
           dataLength={movies.length}
           next={fetchMoreData}
-          hasMore={hasMore}
+          hasMore={movies.length >= filteredMoviesCount ? false : true}
           loader={movies.length >= filteredMoviesCount ? <h4>NO MORE</h4> : <h4>Loading...</h4>}
-        //   endMessage={
-        //       <p>end result</p>
-        //   }
+          endMessage={
+              <p>END</p>
+          }
         >
           <Grid container spacing={2} sx={{p:2}}>
             { movies && movies.map(movie => (

@@ -29,6 +29,7 @@ const ProducerInfos = () => {
                 })
             }
             <p>{staff && staff.work}</p>
+            <p>{staff && staff.ratings}</p>
             <p>{staff && staff.info}</p>
 
         </div>

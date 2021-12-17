@@ -77,6 +77,10 @@ const getOMDBmovies = async() => {
     }
 }
 
+function getRandomNumberBetween(min,max){
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+
 const seedStaffs = async () => {
     try {
         let staffs = [];
@@ -95,7 +99,7 @@ const seedStaffs = async () => {
                             name:element.name,
                             work:roles[Math.floor(Math.random()*3) + 1],
                             info:element.company.catchPhrase,
-                            ratings: (Math.random()*9 + 1).toFixed(1),
+                            ratings: getRandomNumberBetween(1,5),
                             avatar: [
                                 {
                                     public_id:element.name,
