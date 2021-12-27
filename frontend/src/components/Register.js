@@ -54,6 +54,7 @@ const RegisterForm = () => {
         formData.set("name",user.name);
         formData.set("email",user.email);
         formData.set("avatar",onRegisterAvatar);
+        formData.set("role","User");
 
         dispatch(register(formData));
 

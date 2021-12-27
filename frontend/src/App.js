@@ -13,6 +13,7 @@ import { getUserDetails } from './redux/userSlice';
 import ActorInfos from './components/actors/ActorInfos';
 import MovieInfos from './components/movies/MovieInfos';
 import ProducerInfos from './components/producers/ProducerInfos';
+import Dashboard from './components/Dashboard';
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
         <Route exact path="/actors/:id" element={ <ActorInfos/>} />
         <Route exact path="/producers" element={ <Producer/>} />
         <Route exact path="/producers/:id" element={ <ProducerInfos/>} />
+        <Route exact path="/dashboard" element={ <Dashboard/>} />
       </Routes>
 
 

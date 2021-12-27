@@ -1,17 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { clearActors, getActorNames, getAllActor, setHasMore } from '../../redux/actorSlice';
+import { clearActors, deleteActor, getActorNames, getAllActor, setHasMore } from '../../redux/actorSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Box, CardMedia, Grid, Paper } from '@mui/material';
+import { Box, Button, CardMedia, Grid, Paper } from '@mui/material';
 import Search from '../Search';
 import RatingFilter from '../RatingFilter';
+import Snack from '../Snack';
 
 const Actor = () => {
     
-    const { staffs, actorNames, staffsCount, hasMore, page } = useSelector(state => state.actor);
+    const { staffs, actorNames, staffsCount, hasMore, page, message } = useSelector(state => state.actor);
     const { keywords } = useSelector(state => state.filter);
+    const { user } = useSelector(state => state.user); 
     const dispatch = useDispatch();
+    const [snack, setSnack] = useState({message:'', open:false});
 
 
     useEffect(() => {
@@ -26,8 +30,15 @@ const Actor = () => {
 
     const fetchMoreData = () => {
         dispatch (getAllActor({...keywords, page}));
-        // if(staffs.length < 0 && staffs.length >= staffsCount) return dispatch(setHasMore(false));
       };
+
+      const handleDelete = (e,actor) => {
+        e.preventDefault();
+        dispatch(deleteActor(actor));
+        setTimeout(() => {
+          setSnack({message : message !== '' ? message : 'Actor REMOVED', open:true})
+        },1000);
+      }
     
     return ( 
         <>
@@ -35,6 +46,14 @@ const Actor = () => {
 <div>
         <h1>ACTORS</h1>
         <hr />
+        { snack &&
+        <Snack
+        handleOnClose={() => {setSnack({...snack,open:false})}}
+        message={snack.message}
+        snackState={snack.open}
+        timeOpen={5000}
+        />
+        }
         <Box sx={{m:3}}>
           <Search items={actorNames} label="Search Actor"/>
         </Box>
@@ -65,6 +84,11 @@ const Actor = () => {
                 {staff.name}
                 </Paper>
                 </Link>
+                <Box>
+                {
+                  (user && user.role === 'Admin') && <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,staff._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                }
+                </Box>
                 </Grid>
                 ))}
                 </Grid>

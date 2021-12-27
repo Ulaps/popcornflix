@@ -4,6 +4,7 @@ import movieReducer from './movieSlice';
 import actorReducer from './actorSlice';
 import producerReducer from './producerSlice';
 import filterReducer from './filterSlice';
+import dashboardReducer from './dashboardSlice';
 
 const store = configureStore({
     reducer : {
@@ -11,7 +12,8 @@ const store = configureStore({
         movie : movieReducer,
         actor : actorReducer,
         producer: producerReducer,
-        filter: filterReducer
+        filter: filterReducer,
+        dashboard : dashboardReducer
 
     }
 

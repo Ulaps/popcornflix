@@ -46,27 +46,24 @@ const Search = ({items, label}) => {
             switch (path) {
                 case '/':
                     dispatch(clearMovies());
-                    // dispatch(clearFilters());
                     dispatch(getAllMovies({}));
                     return;
                 case '/actors':
                     dispatch(clearActors());
-                    // dispatch(clearFilters());
                     dispatch(getAllActor({}));
                     return;
                     case '/producers':
                     dispatch(clearProducers());
-                    // dispatch(clearFilters());
                     dispatch(getAllProducer({}));
                     return;
                 default:
                     break;
             };  
         }
-        // if (path === '/') return dispatch(setKeywords({...keywords, title: value}));
-        // if (path === '/actors') return dispatch(setKeywords({...keywords, name: value}));
-        // if (path === '/producers') return dispatch(setKeywords({...keywords, name: value}));
-        // console.log(event.target.value,value)
+        if (path === '/') return dispatch(setKeywords({...keywords, title: value}));
+        if (path === '/actors') return dispatch(setKeywords({...keywords, name: value}));
+        if (path === '/producers') return dispatch(setKeywords({...keywords, name: value}));
+        console.log(event.target.value,value)
 
     }
 

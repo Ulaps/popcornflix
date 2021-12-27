@@ -1,19 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { clearMovies, getAllMovies, getMovieTitles, setHasMore } from '../../redux/movieSlice';
+import { clearMovies, deleteMovie, getAllMovies, getMovieTitles, setHasMore } from '../../redux/movieSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { CardMedia, Grid, Paper } from '@mui/material';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { CardMedia, Grid, Paper, Button } from '@mui/material';
 import Search from '../Search';
 import { Box } from '@mui/system';
 import RatingFilter from '../RatingFilter';
 import YearFilter from '../YearFilter';
+import Snack from '../Snack';
 
 const Mainmovies = () => {
     
-    const { movies, movieTitles, moviesCount, filteredMoviesCount, hasMore, page } = useSelector(state => state.movie);
+    const { movies, movieTitles, moviesCount, filteredMoviesCount, hasMore, page, message } = useSelector(state => state.movie);
     const { keywords } = useSelector(state => state.filter)
+    const { user } = useSelector(state => state.user)
     const dispatch = useDispatch();
+    const [snack, setSnack] = useState({message:'', open:false})
 
 
     useEffect(() => {
@@ -29,8 +33,16 @@ const Mainmovies = () => {
 
     const fetchMoreData = () => {
         dispatch (getAllMovies({page, ...keywords}));
-        // if(movies.length < 0 && movies.length >= filteredMoviesCount) return dispatch(setHasMore(false));
       };
+
+    const handleDelete = (e,movie) => {
+      e.preventDefault();
+      dispatch(deleteMovie(movie));
+      setTimeout(() => {
+        setSnack({message : message !== '' ? message : 'Movie REMOVED', open:true})
+      },1000);
+    }
+    
     
     return ( 
         <>
@@ -38,6 +50,14 @@ const Mainmovies = () => {
 <div>
         <h1>MOVIES</h1>
         <hr />
+        { snack &&
+        <Snack
+        handleOnClose={() => {setSnack({...snack,open:false})}}
+        message={snack.message}
+        snackState={snack.open}
+        timeOpen={5000}
+        />
+        }
         <Box sx={{m:3}}>
           <Search items={movieTitles} label="Search Movie"/>
         </Box>
@@ -55,10 +75,10 @@ const Mainmovies = () => {
           }
         >
           <Grid container spacing={2} sx={{p:2}}>
-            { movies && movies.map(movie => (
+            { movies.map(movie => (
             <Grid item lg={4} md={4} key={movie._id} sm={4} xs={12}>
-              <Link to={`/movies/${movie._id}`}>
               <Paper elevation={4} sx={{p:2}}>
+              <Link to={`/movies/${movie._id}`}>
                 <CardMedia
                 component="img"
                 height="194"
@@ -67,8 +87,13 @@ const Mainmovies = () => {
                 sx={{pb:2}}
                 />
                 {movie.title}
-                </Paper>
                 </Link>
+                <Box>
+                {
+                  (user && user.role === 'Admin') && <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,movie._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                }
+                </Box>
+                </Paper>
                 </Grid>
                 ))}
                 </Grid>

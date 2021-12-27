@@ -11,8 +11,6 @@ import { Link } from 'react-router-dom';
 import Tooltip from '@mui/material/Tooltip';
 import LocalMoviesIcon from '@mui/icons-material/LocalMovies';
 import MenuItem from '@mui/material/MenuItem';
-// import SearchBar from './SearchBar';
-// import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import { logout } from '../redux/userSlice';
@@ -20,7 +18,7 @@ import GoogleLogoutHook from './GoogleLogoutHook';
 import { clearFilters } from '../redux/filterSlice';
 
 const Navbar = () => {
-    const pages = [{ name: 'Movies', link: '/'}, {name :'Actors', link: '/actors'},{name :'Producers', link: '/producers'}];
+    const pages = [{name:'Dashboard', link:'/dashboard'},{ name: 'Movies', link: '/'}, {name :'Actors', link: '/actors'},{name :'Producers', link: '/producers'}];
     const settings = ['Logout'];
   
     const [anchorElNav, setAnchorElNav] = React.useState(null);

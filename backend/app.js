@@ -19,10 +19,13 @@ app.use(fileUpload());
 const movies = require('./routes/movie');
 const users = require('./routes/user');
 const staffs = require('./routes/staff');
+const dashboard = require('./routes/dashboard');
+
 
 app.use('/api/v1', movies);
 app.use('/api/v1', users);
 app.use('/api/v1', staffs);
+app.use('/api/v1', dashboard);
 
 app.use('/routes',(req,res,next) => {
     res.status(200).json({

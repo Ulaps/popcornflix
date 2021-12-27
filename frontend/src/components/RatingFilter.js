@@ -15,24 +15,24 @@ const RatingFilter = () => {
     const path = window.location.pathname
 
     useEffect(() => {
-        switch (path) {
-            case '/':
-                dispatch(clearMovies());
-                dispatch(getAllMovies({...keywords}))
-                break;
-            case '/actors':
-                dispatch(clearActors());
-                dispatch(getAllActor({...keywords}))
-                break;
-            case '/producers':
-                dispatch(clearProducers());
-                dispatch(getAllProducer({...keywords}))
-                break;
+        if(keywords !== null && keywords.hasOwnProperty('ratings')) {
+            switch (path) {
+                case '/':
+                    dispatch(clearMovies());
+                    dispatch(getAllMovies({...keywords}))
+                    break;
+                case '/actors':
+                    dispatch(clearActors());
+                    dispatch(getAllActor({...keywords}))
+                    break;
+                case '/producers':
+                    dispatch(clearProducers());
+                    dispatch(getAllProducer({...keywords}))
+                    break;
         
-            default:
-                break;
-        }
-        return () => {
+                default:
+                    break;
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selected])

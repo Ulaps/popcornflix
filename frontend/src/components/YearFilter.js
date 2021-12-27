@@ -16,17 +16,16 @@ const YearFilter = () => {
     const path = window.location.pathname
 
     useEffect(() => {
-        switch (path) {
-            case '/':
-                dispatch(clearMovies());
-                dispatch(getAllMovies({...keywords}))
-                break;
-        
-            default:
-                break;
-        }
-        return () => {
-        }
+        if(keywords !== null && keywords.hasOwnProperty('year')) {
+            switch (path) {
+                case '/':
+                    dispatch(clearMovies());
+                    dispatch(getAllMovies({...keywords}))
+                    break;
+                    default:
+                        break;
+                    }
+                }
     }, [value])
 
     return ( 

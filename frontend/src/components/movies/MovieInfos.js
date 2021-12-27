@@ -1,23 +1,28 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux'
-import { getMovieInfos } from '../../redux/movieSlice';
+import { deleteMovieReview, getMovieInfos } from '../../redux/movieSlice';
+import { Box } from '@mui/system';
+import { Button, List } from '@mui/material';
+import Comment from '../Comment';
+import MovieReview from './MovieReview';
 
 const MovieInfos = () => {
 
     const id = useParams();
     console.log(id);
-    const { movie } = useSelector(state => state.movie);
+    const { movie, reviews, userReview } = useSelector(state => state.movie);
+    const { user } = useSelector(state => state.user)
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getMovieInfos(id))
+        dispatch(getMovieInfos({id, user}))
         return () => {
             console.log(`Cleaned`)
         }
-    }, [])
+    }, [user])
 
-    console.log('Ewan asan', movie);
+    // console.log('Ewan asan', movie, userReview);
     return ( 
         <>
         <div style={{padding:'10%'}}>
@@ -28,11 +33,30 @@ const MovieInfos = () => {
                     return <img src={poster.url} alt={poster.public_url}/>
                 })
             }
-            <p>{movie && movie.genre}</p>
-            <p>{movie && movie.showType}</p>
-            <p>{movie && movie.year}</p>
-            <p>{movie && movie.rating}</p>
-            <p>{movie && movie.summary}</p>
+            <p>Genre: {movie && movie.genre}</p>
+            <p>Type: {movie && movie.showType}</p>
+            <p>Year: {movie && movie.year}</p>
+            <p>Movie Rating: {movie && movie.ratings}</p>
+            <p>Summary: {movie && movie.summary}</p>
+
+            <Box sx={{m:3}}>
+                <h3>Reviews</h3>
+                <List sx={{width:'100%', bgcolor:'Background.paper'}}>
+                    { reviews && 
+                    reviews.map(review => {
+                        return <Comment comment={review} key={review._id}/>
+                    })
+                    }
+                    {( userReview && userReview.length > 0) &&
+                    <Box sx={{backgroundColor:'#fafafa'}}>
+                        <Comment comment={userReview[0]}/>
+                        {/* {console.log(userReview)} */}
+                        <Button size="small" onClick={() => { dispatch(deleteMovieReview({id:userReview[0]._id, movieId:movie._id})) }}>Delete</Button>
+                    </Box> 
+                    }
+                </List>
+                <MovieReview/>
+            </Box>
 
         </div>
         </>

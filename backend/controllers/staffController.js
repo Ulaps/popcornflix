@@ -181,11 +181,12 @@ exports.createStaffReview = catchAsyncErrors(async (req, res, next) => {
 
     staff.ratings = staff.reviews.reduce((acc, item) => item.rating+ acc, 0)/ staff.reviews.length
 
-    await staff.save({validateBeforeSave : false});
+    const staffReview = await staff.save({validateBeforeSave : false});
 
     res.status(200).json({
         success : true,
-        message : 'Review Created'
+        message : 'Review Created',
+        reviews : staffReview.reviews
     })
 })
 

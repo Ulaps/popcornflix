@@ -1,18 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { clearProducers, getAllProducer, getProducerNames, setHasMore } from '../../redux/producerSlice';
+import { clearProducers, deleteProducer, getAllProducer, getProducerNames, setHasMore } from '../../redux/producerSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Box, CardMedia, Grid, Paper } from '@mui/material';
+import { Box, Button, CardMedia, Grid, Paper } from '@mui/material';
 import Search from '../Search';
 import { setKeywords } from '../../redux/filterSlice';
 import RatingFilter from '../RatingFilter';
+import Snack from '../Snack';
 
 const Producer = () => {
     
-    const { staffs, producerNames,  staffsCount, hasMore, page } = useSelector(state => state.producer);
-    const { keywords } =useSelector(state => state.filter)
+    const { staffs, producerNames,  staffsCount, hasMore, page, message } = useSelector(state => state.producer);
+    const { keywords } =useSelector(state => state.filter);
+    const { user } = useSelector(state => state.user);
     const dispatch = useDispatch();
+    const [ snack, setSnack] = useState({message:'', open:false});
 
 
     useEffect(() => {
@@ -27,8 +31,15 @@ const Producer = () => {
 
     const fetchMoreData = () => {
         dispatch (getAllProducer({...keywords, page}));
-        // if(staffs.length < 0 && staffs.length >= staffsCount) return dispatch(setHasMore(false));
       };
+
+      const handleDelete = (e,producer) => {
+        e.preventDefault();
+        dispatch(deleteProducer(producer));
+        setTimeout(() => {
+          setSnack({message : message !== '' ? message : 'Producer REMOVED', open:true})
+        },1000);
+      }
     
     return ( 
         <>
@@ -36,6 +47,14 @@ const Producer = () => {
 <div>
         <h1>PRODUCERS</h1>
         <hr />
+        { snack &&
+        <Snack
+        handleOnClose={() => {setSnack({...snack,open:false})}}
+        message={snack.message}
+        snackState={snack.open}
+        timeOpen={5000}
+        />
+        }
         <Box sx={{m:3}}>
           <Search items={producerNames} label="Search Producer"/>
         </Box>
@@ -66,6 +85,11 @@ const Producer = () => {
                 {staff.name}
                 </Paper>
                 </Link>
+                <Box>
+                {
+                  (user && user.role === 'Admin') && <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,staff._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                }
+                </Box>
                 </Grid>
                 ))}
                 </Grid>

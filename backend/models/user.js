@@ -25,7 +25,18 @@ const userSchema = new mongoose.Schema ({
                 required : true
             }
         }
-    ]
+    ],
+    role: {
+        type : String,
+        required : [true, 'Role Required'],
+        enum : {
+            values: [
+                'Admin',
+                'User'
+            ],
+            message: 'Incorrect Role'
+        }
+    }
 })
 
 userSchema.methods.getJwtToken = function () {

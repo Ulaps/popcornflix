@@ -1,6 +1,5 @@
 import { Alert, Backdrop, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import GoogleIcon from '@mui/icons-material/Google';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearError, loginUser, setEmail, setRegister } from '../redux/userSlice';
 import { useState } from 'react';
@@ -34,9 +33,9 @@ const LoginForm = () => {
             sx={{p:2}}
         >
             { isLoading &&
-                <Backdrop sx={{ color: 'black', zIndex: (theme) => theme.zIndex.drawer + 1000 }} open={true}>
+                // <Backdrop sx={{ color: '#000000', zIndex: (theme) => theme.zIndex.drawer + 1000 }} open={true}>
                     <CircularProgress color="inherit" />
-                </Backdrop> 
+                // </Backdrop> 
             }
 
             { error &&

@@ -26,7 +26,8 @@ export const getActorInfos = createAsyncThunk(
     'actor/getActorInfos',
     async(obj, {rejectWithValue}) => {
         try {
-            const response = await axios.get(`/api/v1/staffdetails/${obj.id}`)
+            const response = await axios.get(`/api/v1/staffdetails/${obj.id.id}`)
+            response.data.user = obj.user._id
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -47,6 +48,44 @@ export const getActorNames = createAsyncThunk(
     }
 )
 
+export const deleteActor = createAsyncThunk(
+    'actor/deleteActor',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.delete(`/api/v1/staff/${obj}`)
+            response.data.staffId = obj
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const createActorReview = createAsyncThunk(
+    'actor/createActorReview',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.put(`/api/v1/staffreview`, {...obj})
+            response.data.review = obj
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const deleteActorReview = createAsyncThunk(
+    'actor/deleteActorReview',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.delete(`/api/v1/delstaffreview?id=${obj.id}&staffId=${obj.staffId}`)
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 
 const initialState = {
     staffs: [],
@@ -54,10 +93,13 @@ const initialState = {
     actorNames: [],
     staffsCount: 0,
     resPerPage: 0,
+    reviews: [],
+    userReview: null,
     isLoading: false,
     errors:null,
     hasMore: true,
     page:1,
+    message:''
 };
 
 const actorSlice = createSlice({
@@ -95,9 +137,11 @@ const actorSlice = createSlice({
         },
         [getActorInfos.fulfilled] : (state, action) => {
             state.staff = action.payload.staff
+            state.reviews = [...action.payload.staff.reviews.filter(review => review.user !== action.payload.user)]
+            state.userReview = action.payload.staff.reviews.filter(review => review.user === action.payload.user)
             state.isLoading = false
         },
-        [getActorInfos] : (state, action) => {
+        [getActorInfos.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         },
@@ -114,6 +158,43 @@ const actorSlice = createSlice({
             state.isLoading = false
         },
         [getActorNames.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [deleteActor.pending] : (state) => {
+            state.isLoading = true
+        },
+        [deleteActor.fulfilled] : (state, action) => {
+            state.message = action.payload.message
+            state.staffs = [...state.staffs.filter(staff => staff._id !== action.payload.staffId)];
+            state.isLoading = false
+        },
+        [deleteActor.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [createActorReview.pending] : (state) => {
+            state.isLoading = true
+        },
+        [createActorReview.fulfilled] : (state, action) => {
+            // console.log('etooooo',action.payload.reviews)
+            state.reviews = [...action.payload.reviews.filter(review => review.user !== action.payload.review.user._id)]
+            state.userReview = action.payload.reviews.filter(review => review.user === action.payload.review.user._id)
+            state.isLoading = false
+        },
+        [createActorReview.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [deleteActorReview.pending] : (state) => {
+            state.isLoading = true
+        },
+        [deleteActorReview.fulfilled] : (state, action) => {
+            state.message = action.payload.message
+            state.userReview = null
+            state.isLoading = false
+        },
+        [deleteActorReview.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         }

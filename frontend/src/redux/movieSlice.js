@@ -26,7 +26,8 @@ export const getMovieInfos = createAsyncThunk(
     'movie/getMovieInfos',
     async(obj, {rejectWithValue}) => {
         try {
-            const response = await axios.get(`/api/v1/movies/${obj.id}`)
+            const response = await axios.get(`/api/v1/movies/${obj.id.id}`)
+            response.data.user = obj.user._id
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -48,10 +49,50 @@ export const getMovieTitles = createAsyncThunk(
     }
 )
 
+export const deleteMovie = createAsyncThunk(
+    'movie/deleteMovie',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.delete(`/api/v1/movies/${obj}`)
+            response.data.movieId = obj
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const createMovieReview = createAsyncThunk(
+    'movie/createMovieReview',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.put(`/api/v1/review`, {...obj});
+            response.data.review = obj
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const deleteMovieReview = createAsyncThunk(
+    'movie/deleteMovieReview',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.delete(`/api/v1/delreview?id=${obj.id}&movieId=${obj.movieId}`)
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 
 const initialState = {
     movies: [],
     movie: null,
+    reviews:[],
+    userReview:null,
     movieTitles: [],
     moviesCount: 0,
     resPerPage: 0,
@@ -60,6 +101,7 @@ const initialState = {
     errors:null,
     hasMore: true,
     page:1,
+    message: '',
 };
 
 const movieSlice = createSlice({
@@ -98,6 +140,8 @@ const movieSlice = createSlice({
         },
         [getMovieInfos.fulfilled] : (state, action) => {
             state.movie = action.payload.movie
+            state.reviews = [...action.payload.movie.reviews.filter(review => review.user !== action.payload.user)]
+            state.userReview = action.payload.movie.reviews.filter(review => review.user === action.payload.user)
             state.isLoading = false
         },
         [getMovieInfos.rejected] : (state, action) => {
@@ -117,6 +161,42 @@ const movieSlice = createSlice({
             state.isLoading = false
         },
         [getMovieTitles.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [deleteMovie.pending] : (state) => {
+            state.isLoading = true
+        },
+        [deleteMovie.fulfilled] : (state,action) => {
+            state.message = action.payload.message
+            state.movies = [...state.movies.filter(movie => movie._id !== action.payload.movieId)];
+            state.isLoading = false
+        },
+        [deleteMovie.rejected] : (state,action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [createMovieReview.pending] : (state) => {
+            state.isLoading = true
+        },
+        [createMovieReview.fulfilled] : (state, action) => {
+            state.reviews = [...action.payload.reviews.filter(review => review.user !== action.payload.review.user._id)]
+            state.userReview = action.payload.reviews.filter(review => review.user === action.payload.review.user._id)
+            state.isLoading = false
+        },
+        [createMovieReview.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [deleteMovieReview.pending] : (state) => {
+            state.isLoading = true
+        },
+        [deleteMovieReview.fulfilled] : (state, action) => {
+            state.message = action.payload.message
+            state.userReview = null
+            state.isLoading = false
+        },
+        [deleteMovieReview.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         }

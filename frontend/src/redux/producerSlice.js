@@ -47,6 +47,18 @@ export const getProducerNames = createAsyncThunk(
     }
 )
 
+export const deleteProducer = createAsyncThunk(
+    'producer/delteProducer',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.delete(`/api/v1/staff/${obj}`)
+            response.data.staffId = obj
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
 
 const initialState = {
     staffs: [],
@@ -57,6 +69,7 @@ const initialState = {
     errors:null,
     hasMore: true,
     page:1,
+    message: ''
 };
 
 const producerSlice = createSlice({
@@ -113,6 +126,18 @@ const producerSlice = createSlice({
             state.isLoading = false
         },
         [getProducerNames.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [deleteProducer.pending] : (state) => {
+            state.isLoading = true
+        },
+        [deleteProducer.fulfilled] : (state, action) => {
+            state.message = action.payload.message
+            state.staffs = [...state.staffs.filter(staff => staff._id !== action.payload.staffId)]
+            state.isLoading = false
+        },
+        [deleteProducer.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         }

@@ -45,7 +45,8 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
         avatar : [{
             public_id : result.public_id,
             url : result.secure_url
-        }]
+        }],
+        role: req.body.role
     })
 
     sendToken(user, 200, res)

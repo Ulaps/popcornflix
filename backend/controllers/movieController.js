@@ -167,7 +167,7 @@ exports.createMovieReview = catchAsyncErrors(async (req, res, next) => {
 
         movie.reviews.forEach(review => {
             if(review.user.toString() === user._id.toString()) {
-                review.commit = swearjar.censor(comment);
+                review.comment = swearjar.censor(comment);
                 review.rating = rating;
             }
         })
@@ -178,11 +178,12 @@ exports.createMovieReview = catchAsyncErrors(async (req, res, next) => {
 
     movie.ratings = movie.reviews.reduce((acc, item) =>  item.rating + acc, 0) / movie.reviews.length
 
-    await movie.save({validateBeforeSave : false});
+    const movieReview = await movie.save({validateBeforeSave : false});
 
     res.status(200).json({
         success:true,
-        message:'Movie Review Created'
+        message:'Movie Review Created',
+        reviews: movieReview.reviews
     })
 })
 

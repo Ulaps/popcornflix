@@ -11,9 +11,14 @@ const movieSchema = new mongoose.Schema({
         type : String,
         required : [true, 'Required Type'],
         enum : [
-            'Movie',
-            'TV Series'
+            'TV Show',
+            'Film',
+            'Movie'
         ]
+    },
+    gross : {
+        type : Number,
+        default :0
     },
     year : {
         type : String,

@@ -34,7 +34,8 @@ let genres = [
 ]
 
 let showType = [
-    'TV Series',
+    'TV Show',
+    'Film',
     'Movie'
 ]
 
@@ -45,7 +46,7 @@ const getSingleMovie = async(id) => {
                 title: response.data.Title.substr(0,78),
                 year: response.data.Year,
                 ratings: parseInt(Math.random() * 11),
-                showType: showType[parseInt(Math.random() * 2)],
+                showType: showType[parseInt(Math.random() * 3)],
                 date_released: Date.now(),
                 runtime: response.data.Runtime.split(' ')[0],
                 genre: genres[parseInt(Math.random() * 14)],
