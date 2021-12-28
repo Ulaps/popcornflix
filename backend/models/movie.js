@@ -50,18 +50,18 @@ const movieSchema = new mongoose.Schema({
     },
     staff : [
         {
-            staff : {
+            user : {
                 type : mongoose.Schema.ObjectId,
-                ref : 'User',
+                ref : 'Staff',
                 required : true
             },
             name : {
                 type : String,
                 required : [true, 'Required Name']
             },
-            role : {
+            work : {
                 type: String,
-                required: [true, 'Required role'],
+                required: [true, 'Required rk'],
                 enum: {
                     values: [
                         'Actor',

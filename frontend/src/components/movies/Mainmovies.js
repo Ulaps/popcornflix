@@ -10,6 +10,9 @@ import { Box } from '@mui/system';
 import RatingFilter from '../RatingFilter';
 import YearFilter from '../YearFilter';
 import Snack from '../Snack';
+import CreateMovie from './CreateMovie';
+import { clearActorNames, getActorNames } from '../../redux/actorSlice';
+import { clearProducerNames, getProducerNames } from '../../redux/producerSlice';
 
 const Mainmovies = () => {
     
@@ -21,11 +24,17 @@ const Mainmovies = () => {
 
 
     useEffect(() => {
+      // get ng mga names ng actor at producer para sa option sa form ng create at update
+      dispatch(getActorNames());
+      dispatch(getProducerNames());
+
       dispatch(getMovieTitles());
       fetchMoreData()
 
       return () => {
         dispatch(clearMovies());
+        dispatch(clearActorNames());
+        dispatch(clearProducerNames());
       }
     }, [])
 
@@ -65,6 +74,9 @@ const Mainmovies = () => {
           <RatingFilter/>
           <YearFilter/>
         </Box>
+        {
+          user && user.role === 'Admin' && <CreateMovie/>
+        }
         <InfiniteScroll
           dataLength={movies.length}
           next={fetchMoreData}

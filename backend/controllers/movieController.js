@@ -30,6 +30,7 @@ exports.createMovie = catchAsyncErrors(async (req, res, next) => {
     }
 
     req.body.posters = imageLinks
+    req.body.staff = JSON.parse(req.body.staff)
 
     const movie = await Movie.create(req.body);
 

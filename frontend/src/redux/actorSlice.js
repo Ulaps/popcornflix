@@ -91,6 +91,7 @@ const initialState = {
     staffs: [],
     staff: null,
     actorNames: [],
+    actorNamesWithId: [],
     staffsCount: 0,
     resPerPage: 0,
     reviews: [],
@@ -115,6 +116,10 @@ const actorSlice = createSlice({
         clearActors : (state) => {
             state.staffs = []
             state.page =1
+        },
+        clearActorNames : (state) => {
+            state.actorNames = []
+            state.actorNamesWithId = []
         }
     },
     extraReducers: {
@@ -155,6 +160,7 @@ const actorSlice = createSlice({
                 return names.push({"title":item})
             })
             state.actorNames = names
+            state.actorNamesWithId = action.payload.name_id
             state.isLoading = false
         },
         [getActorNames.rejected] : (state, action) => {
@@ -200,5 +206,5 @@ const actorSlice = createSlice({
         }
     }
 });
-export const {setHasMore, setPage, clearActors} = actorSlice.actions
+export const {setHasMore, setPage, clearActors, clearActorNames} = actorSlice.actions
 export default actorSlice.reducer
