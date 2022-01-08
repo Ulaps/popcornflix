@@ -13,7 +13,7 @@ const staffSchema = new mongoose.Schema({
                 'Actor',
                 'Actress',
                 'Director',
-                'Producer',
+                'Producer'
             ],
             message: 'Please select correct role for this person'
         }

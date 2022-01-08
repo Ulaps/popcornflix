@@ -65,6 +65,24 @@ export const createMovie = createAsyncThunk(
     }
 )
 
+export const updateMovie = createAsyncThunk(
+    'movie/updateMovie',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.put(`/api/v1/movies/${obj.get('_id')}`,obj ,{
+                headers: {
+                    "Content-Type":"multipart/form-data"
+                }
+            })
+            response.data.movieId = obj.get('_id')
+            console.log('update',response.data);
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 export const deleteMovie = createAsyncThunk(
     'movie/deleteMovie',
     async(obj, {rejectWithValue}) => {
@@ -189,6 +207,19 @@ const movieSlice = createSlice({
             state.isLoading = false
         },
         [createMovie.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [updateMovie.pending] : (state) => {
+            state.isLoading = true
+        },
+        [updateMovie.fulfilled] : (state, action) => {
+            console.log(action.payload)
+            const movieIndex = state.movies.findIndex(movie => movie._id === action.payload.movie._id)
+            state.movies[movieIndex] = {...action.payload.movie}
+            state.isLoading = false
+        },
+        [updateMovie.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         },

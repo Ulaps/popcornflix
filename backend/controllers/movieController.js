@@ -112,6 +112,8 @@ exports.updateMovie = catchAsyncErrors(async (req, res, next) => {
         req.body.posters = imageLinks
     }
 
+    req.body.staff = JSON.parse(req.body.staff)
+
     //Update na talaga
     movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
         new : true,

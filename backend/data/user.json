@@ -5,7 +5,8 @@
         "avatar": {
             "public_id":"ulap",
             "url":"https://ui-avatars.com/api/?name=Ulap"
-        }
+        },
+        "role" : "Admin"
     },
     {
         "name":"admin",
@@ -13,10 +14,7 @@
         "avatar": {
             "public_id" : "admin",
             "url": "https://ui-avatars.com/api/?name=admin"
-        }
-    },
-    {
-        "name":"testing",
-        "email":"testuser@gmail.com"
+        },
+        "role" : "Admin"
     }
 ]

@@ -16,7 +16,7 @@ const ActorReview = () => {
         e.preventDefault();
 
         const review = {
-            staffId:staff._id,
+            staffId:staff.staff._id,
             user : {
                 _id : user._id,
                 name: user.name

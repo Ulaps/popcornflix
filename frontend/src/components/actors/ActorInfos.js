@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux'
 import { getActorInfos } from '../../redux/actorSlice';
 import { Box, Button, List } from '@mui/material';
@@ -26,16 +26,24 @@ const ActorInfos = () => {
     return ( 
         <>
         <div style={{padding:'10%'}}>
-            <p>{staff && staff.name}</p>
+            <p>Name : {staff && staff.staff.name}</p>
             {
                 staff &&
-                staff.avatar.map(avatar => {
+                staff.staff.avatar.map(avatar => {
                     return <img src={avatar.url} alt={avatar.public_url}/>
                 })
             }
-            <p>{staff && staff.work}</p>
-            <p>{staff && staff.ratings}</p>
-            <p>{staff && staff.info}</p>
+            <p>Work : {staff && staff.staff.work}</p>
+            <p>Ratings : {staff && staff.staff.ratings}</p>
+            <p>Info : {staff && staff.staff.info}</p>
+            <h5>Starred At:</h5>
+            { staff && staff.movies &&
+                staff.movies.map(movie => {
+                    return <>
+                        <Link to={`/movies/${movie._id}`}>{movie.title}</Link><br/>
+                    </>
+                })
+            }
 
             <Box sx={{m:3}}>
                 <h3>Reviews</h3>
@@ -49,7 +57,7 @@ const ActorInfos = () => {
                     <Box sx={{backgroundColor:'#fafafa'}}>
                         <Comment comment={userReview[0]}/>
                         {/* {console.log(userReview)} */}
-                        <Button size="small" onClick={() => { dispatch(deleteActorReview({id:userReview[0]._id, staffId:staff._id})) }}>Delete</Button>
+                        <Button size="small" onClick={() => { dispatch(deleteActorReview({id:userReview[0]._id, staffId:staff.staff._id})) }}>Delete</Button>
                     </Box> 
                     }
                 </List>

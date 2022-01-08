@@ -1,22 +1,23 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { clearMovies, deleteMovie, getAllMovies, getMovieTitles, setHasMore } from '../../redux/movieSlice';
+import { clearMovies, deleteMovie, getAllMovies, getMovieTitles } from '../../redux/movieSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { CardMedia, Grid, Paper, Button } from '@mui/material';
+import { CardMedia, Grid, Paper, Button, Backdrop, CircularProgress } from '@mui/material';
 import Search from '../Search';
 import { Box } from '@mui/system';
 import RatingFilter from '../RatingFilter';
 import YearFilter from '../YearFilter';
 import Snack from '../Snack';
 import CreateMovie from './CreateMovie';
+import UpdateMovie from './UpdateMovie';
 import { clearActorNames, getActorNames } from '../../redux/actorSlice';
 import { clearProducerNames, getProducerNames } from '../../redux/producerSlice';
 
 const Mainmovies = () => {
     
-    const { movies, movieTitles, moviesCount, filteredMoviesCount, hasMore, page, message } = useSelector(state => state.movie);
+    const { movies, movieTitles, isLoading, filteredMoviesCount, page, message } = useSelector(state => state.movie);
     const { keywords } = useSelector(state => state.filter)
     const { user } = useSelector(state => state.user)
     const dispatch = useDispatch();
@@ -59,6 +60,15 @@ const Mainmovies = () => {
 <div>
         <h1>MOVIES</h1>
         <hr />
+        { isLoading &&
+            <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={true}
+            onClick={false}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        }
         { snack &&
         <Snack
         handleOnClose={() => {setSnack({...snack,open:false})}}
@@ -86,14 +96,14 @@ const Mainmovies = () => {
               <p>END</p>
           }
         >
-          <Grid container spacing={2} sx={{p:2}}>
+          <Grid container spacing={1} sx={{p:2}}>
             { movies.map(movie => (
-            <Grid item lg={4} md={4} key={movie._id} sm={4} xs={12}>
+            <Grid item key={movie._id} xs={3}>
               <Paper elevation={4} sx={{p:2}}>
               <Link to={`/movies/${movie._id}`}>
                 <CardMedia
                 component="img"
-                height="194"
+                height="400"
                 image={movie.posters[0].url}
                 alt={movie.posters[0].public_url}
                 sx={{pb:2}}
@@ -102,7 +112,11 @@ const Mainmovies = () => {
                 </Link>
                 <Box>
                 {
-                  (user && user.role === 'Admin') && <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,movie._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                  (user && user.role === 'Admin') && 
+                  <div>
+                  <UpdateMovie id={movie._id} movie={movie}/>
+                  <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,movie._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                  </div>
                 }
                 </Box>
                 </Paper>

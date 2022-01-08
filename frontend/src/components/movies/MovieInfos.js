@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux'
 import { deleteMovieReview, getMovieInfos } from '../../redux/movieSlice';
 import { Box } from '@mui/system';
@@ -38,6 +38,24 @@ const MovieInfos = () => {
             <p>Year: {movie && movie.year}</p>
             <p>Movie Rating: {movie && movie.ratings}</p>
             <p>Summary: {movie && movie.summary}</p>
+            <h5>Starring: </h5>
+            { (movie && movie.staff) && 
+                movie.staff.filter(staff => staff.work === 'Actor' || staff.work === 'Actress')
+                .map(item => {
+                    return <>
+                    <Link to={`/actors/${item.user}`} key={item.user}>{item.name}</Link><br/>
+                    </>
+                })
+            }
+            <h5>Produced By: </h5>
+            { (movie && movie.staff) && 
+                movie.staff.filter(staff => staff.work === 'Producer')
+                .map(item => {
+                    return <>
+                    <Link to={`/producers/${item.user}`} key={item.user}>{item.name}</Link><br/>
+                    </>
+                })
+            }
 
             <Box sx={{m:3}}>
                 <h3>Reviews</h3>

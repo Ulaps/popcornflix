@@ -47,8 +47,42 @@ export const getProducerNames = createAsyncThunk(
     }
 )
 
+export const createProducer = createAsyncThunk(
+    'producer/createProducer',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.post(`/api/v1/staff/create`,obj ,{
+                headers: {
+                    "Content-Type":"multipart/form-data"
+                }
+            })
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const updateProducer = createAsyncThunk(
+    'producer/updateProducer',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.put(`/api/v1/staff/${obj.get('_id')}`,obj ,{
+                headers: {
+                    "Content-Type":"multipart/form-data"
+                }
+            })
+            response.data.staffId = obj.get('_id')
+            console.log('update',response.data);
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 export const deleteProducer = createAsyncThunk(
-    'producer/delteProducer',
+    'producer/deleteProducer',
     async(obj, {rejectWithValue}) => {
         try {
             const response = await axios.delete(`/api/v1/staff/${obj}`)
@@ -132,6 +166,31 @@ const producerSlice = createSlice({
             state.isLoading = false
         },
         [getProducerNames.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [createProducer.pending] : (state) => {
+            state.isLoading = true
+        },
+        [createProducer.fulfilled] : (state, action) => {
+            console.log(action.payload)
+            state.staffs = [action.payload.staff,...state.staffs]
+            state.isLoading = false
+        },
+        [createProducer.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [updateProducer.pending] : (state) => {
+            state.isLoading = true
+        },
+        [updateProducer.fulfilled] : (state, action) => {
+            console.log(action.payload)
+            const staffIndex = state.staffs.findIndex(staff => staff._id === action.payload.staff._id)
+            state.staffs[staffIndex] = {...action.payload.staff}
+            state.isLoading = false
+        },
+        [updateProducer.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         },

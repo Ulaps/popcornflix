@@ -4,14 +4,16 @@ import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
 import { clearActors, deleteActor, getActorNames, getAllActor, setHasMore } from '../../redux/actorSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Box, Button, CardMedia, Grid, Paper } from '@mui/material';
+import { Backdrop, Box, Button, CardMedia, CircularProgress, Grid, Paper } from '@mui/material';
 import Search from '../Search';
 import RatingFilter from '../RatingFilter';
 import Snack from '../Snack';
+import CreateActor from './CreateActor';
+import UpdateActor from './UpdateActors';
 
 const Actor = () => {
     
-    const { staffs, actorNames, staffsCount, hasMore, page, message } = useSelector(state => state.actor);
+    const { staffs, actorNames, staffsCount, hasMore, page, message, isLoading } = useSelector(state => state.actor);
     const { keywords } = useSelector(state => state.filter);
     const { user } = useSelector(state => state.user); 
     const dispatch = useDispatch();
@@ -46,6 +48,15 @@ const Actor = () => {
 <div>
         <h1>ACTORS</h1>
         <hr />
+        { isLoading &&
+            <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={true}
+            onClick={false}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        }
         { snack &&
         <Snack
         handleOnClose={() => {setSnack({...snack,open:false})}}
@@ -60,6 +71,9 @@ const Actor = () => {
         <Box sx={{m:3}}>
           <RatingFilter/>
         </Box>
+        {
+          user && user.role === 'Admin' && <CreateActor/>
+        }
         <InfiniteScroll
           dataLength={staffs.length}
           next={fetchMoreData}
@@ -70,25 +84,29 @@ const Actor = () => {
           }
         >
           <Grid container spacing={2} sx={{p:2}}>
-            { staffs && staffs.map(staff => (
-            <Grid item lg={4} md={4} key={staff._id} sm={4} xs={12}>
-              <Link to={`/actors/${staff._id}`}>
+            { staffs.map(staff => (
+            <Grid item key={staff._id} xs={3}>
               <Paper elevation={4} sx={{p:2}}>
+              <Link to={`/actors/${staff._id}`}>
                 <CardMedia
                 component="img"
-                height="194"
+                height="250"
                 image={staff.avatar[0].url}
                 alt={staff.avatar[0].public_url}
                 sx={{pb:2}}
                 />
                 {staff.name}
-                </Paper>
-                </Link>
+                  </Link>
                 <Box>
                 {
-                  (user && user.role === 'Admin') && <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,staff._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                  (user && user.role === 'Admin') && 
+                  <div>
+                    <UpdateActor id={staff._id} staff={staff}/>
+                    <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,staff._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                  </div>
                 }
                 </Box>
+                </Paper>
                 </Grid>
                 ))}
                 </Grid>

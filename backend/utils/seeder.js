@@ -45,7 +45,7 @@ const getSingleMovie = async(id) => {
             movies.push({
                 title: response.data.Title.substr(0,78),
                 year: response.data.Year,
-                ratings: parseInt(Math.random() * 11),
+                ratings: Math.floor(Math.random() * 5) + 1,
                 showType: showType[parseInt(Math.random() * 3)],
                 date_released: Date.now(),
                 runtime: response.data.Runtime.split(' ')[0],

@@ -2,17 +2,18 @@ import { useEffect, useState } from 'react';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch} from 'react-redux';
-import { clearProducers, deleteProducer, getAllProducer, getProducerNames, setHasMore } from '../../redux/producerSlice';
+import { clearProducers, deleteProducer, getAllProducer, getProducerNames } from '../../redux/producerSlice';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Box, Button, CardMedia, Grid, Paper } from '@mui/material';
+import { Backdrop, Box, Button, CardMedia, CircularProgress, Grid, Paper } from '@mui/material';
 import Search from '../Search';
-import { setKeywords } from '../../redux/filterSlice';
 import RatingFilter from '../RatingFilter';
 import Snack from '../Snack';
+import UpdateProducer from './UpdateProducer';
+import CreateProducer from './CreateProducer';
 
 const Producer = () => {
     
-    const { staffs, producerNames,  staffsCount, hasMore, page, message } = useSelector(state => state.producer);
+    const { staffs, producerNames,  staffsCount, page, message, isLoading } = useSelector(state => state.producer);
     const { keywords } =useSelector(state => state.filter);
     const { user } = useSelector(state => state.user);
     const dispatch = useDispatch();
@@ -47,6 +48,15 @@ const Producer = () => {
 <div>
         <h1>PRODUCERS</h1>
         <hr />
+        { isLoading &&
+            <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={true}
+            onClick={false}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        }
         { snack &&
         <Snack
         handleOnClose={() => {setSnack({...snack,open:false})}}
@@ -59,8 +69,10 @@ const Producer = () => {
           <Search items={producerNames} label="Search Producer"/>
         </Box>
         <Box sx={{m:3}}>
-          <RatingFilter/>
         </Box>
+        {
+          user && user.role === 'Admin' && <CreateProducer/>
+        }
         <InfiniteScroll
           dataLength={staffs.length}
           next={fetchMoreData}
@@ -72,23 +84,27 @@ const Producer = () => {
         >
           <Grid container spacing={2} sx={{p:2}}>
             { staffs && staffs.map(staff => (
-            <Grid item lg={4} md={4} key={staff._id} sm={4} xs={12}>
-              <Link to={`/producers/${staff._id}`}>
+            <Grid item key={staff._id} xs={3}>
               <Paper elevation={4} sx={{p:2}}>
+              <Link to={`/producers/${staff._id}`}>
                 <CardMedia
                 component="img"
-                height="194"
+                height="250"
                 image={staff.avatar[0].url}
                 alt={staff.avatar[0].public_url}
                 sx={{pb:2}}
                 />
                 {staff.name}
-                </Paper>
                 </Link>
-                <Box>
                 {
-                  (user && user.role === 'Admin') && <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,staff._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                  (user && user.role === 'Admin') && 
+                  <div>
+                  <UpdateProducer id={staff._id} staff={staff}/>
+                  <Button variant='contained'color='error' onClick={(e) => {handleDelete(e,staff._id)}}><DeleteOutlinedIcon /> DELETE </Button>
+                  </div>
                 }
+                </Paper>
+                <Box>
                 </Box>
                 </Grid>
                 ))}

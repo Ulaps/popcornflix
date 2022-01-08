@@ -1,5 +1,5 @@
 import { Autocomplete, Button, Dialog, DialogContent, DialogTitle, FormControl, Grid, ImageList, ImageListItem, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, TextField } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
@@ -7,10 +7,11 @@ import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import NotesIcon from '@mui/icons-material/Notes';
 import MoneyIcon from '@mui/icons-material/Money';
 import { useDispatch, useSelector } from "react-redux";
-import { createMovie } from "../../redux/movieSlice";
+import { updateMovie } from "../../redux/movieSlice";
 import {yearMonthDateConvert} from "../../helpers/dateHelpers"
+import EditIcon from '@mui/icons-material/Edit';
 
-const CreateMovie = () => {
+const UpdateMovie = ({id, movie}) => {
 
     const genres = [
         'Thriller',
@@ -52,6 +53,29 @@ const CreateMovie = () => {
         gross: 0,
     })
 
+    useEffect(() => {
+        setValues({
+            ...values,
+            title : movie.title,
+            genre : movie.genre,
+            showType : movie.showType,
+            runtime : movie.runtime,
+            year : movie.year,
+            date_released : movie.date_released,
+            summary : movie.summary,
+            actors : movie.staff.filter((staff) => ( staff.role === 'Actor' || staff.role === 'Actress' )),
+            producers: movie.staff.filter((staff) => ( staff.role === 'Producer')),
+            gross : movie.gross
+        })
+        
+        setYear(new Date(movie.year))
+        setDateReleased(movie.date_released)
+        setImagePreview(movie.posters.map(poster => poster.url))
+        return () => {
+            console.log('Cleaned')
+        }
+    }, [])
+
     const handleChange = (e) => {
         setValues({...values, [e.target.name] : e.target.value})
     }
@@ -86,7 +110,7 @@ const CreateMovie = () => {
 
     const handleImage =(e) => {
         const files = Array.from(e.target.files)
-        // setImagePreview([]);
+        setImagePreview([]);
 
         files.forEach((file) => {
             const reader = new FileReader();
@@ -115,6 +139,7 @@ const CreateMovie = () => {
         e.preventDefault();
 
         const formData = new FormData();
+        formData.set("_id",id);
         formData.set("title", values.title);
         formData.set("genre", values.genre);
         formData.set("showType", values.showType);
@@ -125,16 +150,15 @@ const CreateMovie = () => {
         formData.set("summary", values.summary);
         formData.set("staff", JSON.stringify(values.actors.concat(values.producers)));
         images.forEach((image) => {
-            formData.append("images", image)
+            formData.append("posters", image)
         });
 
-        dispatch(createMovie(formData))
+        dispatch(updateMovie(formData))
         
         setValues({
             title: "",
             genre: "",
             showType: "",
-            gross: 0,
             runtime: 0,
             year: new Date().getFullYear(),
             date_released: '',
@@ -142,6 +166,7 @@ const CreateMovie = () => {
             actors: [],
             producers:[],
             staff: [],
+            gross: 0,
         })
 
         setOpen(false);
@@ -150,9 +175,9 @@ const CreateMovie = () => {
     }
     return (
         <>
-        <Button variant="contained" onClick={handleOpen}> Create New Movie </Button>
+        <Button variant='contained' color='warning' onClick={(e) => {handleOpen(e,movie._id)}}><EditIcon/>UPDATE </Button>
         <Dialog fullWidth open ={open} onClose={handleClose}>
-            <DialogTitle>Create New Movie</DialogTitle>
+            <DialogTitle> Update Movie</DialogTitle>
             <form encType="multipart/form-data" noValidate onSubmit={formHandler}>
                 <DialogContent>
                     <Grid container spacing={2} sx={{p:1}}>
@@ -247,7 +272,7 @@ const CreateMovie = () => {
                         <FormControl fullWidth>
                             <InputLabel htmlFor="gross-label">Gross</InputLabel>
                             <OutlinedInput
-                                id="gross-label"
+                                id="summary-label"
                                 name="gross"
                                 value={values.gross}
                                 onChange={handleChange}
@@ -341,4 +366,4 @@ const CreateMovie = () => {
     )
 }
 
-export default CreateMovie
+export default UpdateMovie

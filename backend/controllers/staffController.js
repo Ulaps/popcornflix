@@ -1,4 +1,5 @@
 const Staff = require('../models/staff');
+const Movie = require('../models/movie');
 
 const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
@@ -51,9 +52,18 @@ exports.getStaffDetails = catchAsyncErrors(async (req, res, next) => {
 
     if(!staff) return next(new ErrorHandler('Staff NOT found', 404));
 
+    // const query = req.query.role === 'Producer' ? {"producers.user" : req.params.id} : {"actors.user" : req.params.id}
+
+    const apiFeatures = new APIFeatures(Movie.find(), {"staff.user" : req.params.id})
+    .search()
+    .filter()
+    
+    let movies = await apiFeatures.query
+
     res.status(200).json({
         success : true,
-        staff
+        staff : {staff, movies : movies.map(movie => { return { title: movie.title, _id: movie._id } })},
+        // movies : 
     })
 })
 
@@ -85,9 +95,9 @@ exports.updateStaff = catchAsyncErrors(async ( req, res, next) => {
 
     if(!staff) return next(new ErrorHandler('Staff unavailable', 404));
     
-    let image = [];
+    let images = [];
 
-    if(typeof req.body === 'string') {
+    if(typeof req.body.images === 'string') {
         images.push(req.body.images)
     } else {
         images = req.body.images
@@ -103,11 +113,11 @@ exports.updateStaff = catchAsyncErrors(async ( req, res, next) => {
 
         //Upload ng bagong avatar
         for( let i=0; i<images.length; i++){
-            const result = await cloudinary.v2.uploader.upload(image[i],{
+            const result = await cloudinary.v2.uploader.upload(images[i],{
                 folder : 'avatar'
             })
     
-            imagelinks.push({
+            imageLinks.push({
                 public_id : result.public_id,
                 url : result.secure_url
             })

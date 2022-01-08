@@ -48,6 +48,40 @@ export const getActorNames = createAsyncThunk(
     }
 )
 
+export const createActor = createAsyncThunk(
+    'actor/createActor',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.post(`/api/v1/staff/create`,obj ,{
+                headers: {
+                    "Content-Type":"multipart/form-data"
+                }
+            })
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const updateActor = createAsyncThunk(
+    'actor/updateActor',
+    async(obj, {rejectWithValue}) => {
+        try {
+            const response = await axios.put(`/api/v1/staff/${obj.get('_id')}`,obj ,{
+                headers: {
+                    "Content-Type":"multipart/form-data"
+                }
+            })
+            response.data.staffId = obj.get('_id')
+            console.log('update',response.data);
+            return response.data
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 export const deleteActor = createAsyncThunk(
     'actor/deleteActor',
     async(obj, {rejectWithValue}) => {
@@ -142,8 +176,8 @@ const actorSlice = createSlice({
         },
         [getActorInfos.fulfilled] : (state, action) => {
             state.staff = action.payload.staff
-            state.reviews = [...action.payload.staff.reviews.filter(review => review.user !== action.payload.user)]
-            state.userReview = action.payload.staff.reviews.filter(review => review.user === action.payload.user)
+            state.reviews = [...action.payload.staff.staff.reviews.filter(review => review.user !== action.payload.user)]
+            state.userReview = action.payload.staff.staff.reviews.filter(review => review.user === action.payload.user)
             state.isLoading = false
         },
         [getActorInfos.rejected] : (state, action) => {
@@ -164,6 +198,31 @@ const actorSlice = createSlice({
             state.isLoading = false
         },
         [getActorNames.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [createActor.pending] : (state) => {
+            state.isLoading = true
+        },
+        [createActor.fulfilled] : (state, action) => {
+            console.log(action.payload)
+            state.staffs = [action.payload.staff,...state.staffs]
+            state.isLoading = false
+        },
+        [createActor.rejected] : (state, action) => {
+            state.errors = action.payload
+            state.isLoading = false
+        },
+        [updateActor.pending] : (state) => {
+            state.isLoading = true
+        },
+        [updateActor.fulfilled] : (state, action) => {
+            console.log(action.payload)
+            const staffIndex = state.staffs.findIndex(staff => staff._id === action.payload.staff._id)
+            state.staffs[staffIndex] = {...action.payload.staff}
+            state.isLoading = false
+        },
+        [updateActor.rejected] : (state, action) => {
             state.errors = action.payload
             state.isLoading = false
         },
